@@ -26,7 +26,6 @@ public class SalesManagementExceptionHandle extends ResponseEntityExceptionHandl
     private static final String CONSTANT_VALIDATION_NOT_NULL = "NotNull";
     private static final String CONSTANT_VALIDATION_PATTERN = "Pattern";
 
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<Error> errors = handleGenerateErrorList(ex.getBindingResult());
@@ -75,36 +74,18 @@ public class SalesManagementExceptionHandle extends ResponseEntityExceptionHandl
     }
 
     private String handleFormatMsgToUser(FieldError fieldError) {
-        if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_BLANK)) {
-            return fieldError.getDefaultMessage().concat(" é obrigatório");
+        switch (Objects.requireNonNull(fieldError.getCode())) {
+            case CONSTANT_VALIDATION_NOT_BLANK:
+            case CONSTANT_VALIDATION_NOT_NULL:
+                return Objects.requireNonNull(fieldError.getDefaultMessage()).concat(" é obrigatório");
+            case CONSTANT_VALIDATION_LENGTH:
+                return Objects.requireNonNull(fieldError.getDefaultMessage()).concat(String.format(" deve ter entre %s e %s caracteres",
+                        Objects.requireNonNull(fieldError.getArguments())[2], fieldError.getArguments()[1]));
+            case CONSTANT_VALIDATION_PATTERN:
+                return Objects.requireNonNull(fieldError.getDefaultMessage()).concat(" formato inválido");
+            default:
+                return fieldError.toString();
         }
-
-        if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_NULL)) {
-            return fieldError.getDefaultMessage().concat(" é obrigatório");
-        }
-
-        if (fieldError.getCode().equals(CONSTANT_VALIDATION_LENGTH)) {
-            return fieldError.getDefaultMessage().concat(String.format(" deve ter entre %s e %s caracteres",
-                    fieldError.getArguments()[2], fieldError.getArguments()[1]));
-        }
-
-        if (fieldError.getCode().equals(CONSTANT_VALIDATION_PATTERN)) {
-            return fieldError.getDefaultMessage().concat(" formato inválido");
-        }
-
-        return fieldError.toString();
-//        switch (fieldError.getCode()) {
-//            case CONSTANT_VALIDATION_NOT_BLANK:
-//            case CONSTANT_VALIDATION_NOT_NULL:
-//                return fieldError.getDefaultMessage().concat(" é obrigatório");
-//            case CONSTANT_VALIDATION_LENGTH:
-//                return fieldError.getDefaultMessage().concat(String.format(" deve ter entre %s e %s caracteres",
-//                        fieldError.getArguments()[2], fieldError.getArguments()[1]));
-//            case CONSTANT_VALIDATION_PATTERN:
-//                return fieldError.getDefaultMessage().concat(" formato inválido");
-//            default:
-//                return fieldError.toString();
-//        }
     }
 
 }
