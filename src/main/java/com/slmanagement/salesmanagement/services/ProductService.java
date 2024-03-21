@@ -47,15 +47,25 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    private Product handleCheckProduct(Long id, Long categoryId) {
+    protected void handleUpdateQuantityInStock(Product product) {
+        productRepository.save(product);
+    }
+
+    protected Product handleCheckProduct(Long id) {
         if (id == null) {
             throw new BusinessRuleException("O código do produto não pode ser nulo.");
         }
 
-        if (productRepository.findById(id).isEmpty()) {
+        Optional<Product> product = productRepository.findById(id);
+
+        if (product.isEmpty()) {
             throw new BusinessRuleException(String.format("O produto de código %s informado não existe.", id));
         }
 
+        return product.get();
+    }
+
+    private Product handleCheckProduct(Long id, Long categoryId) {
         Optional<Product> product = findById(id, categoryId);
 
         if (product.isEmpty()) {
