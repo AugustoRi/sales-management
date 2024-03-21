@@ -25,6 +25,7 @@ public class SalesManagementExceptionHandle extends ResponseEntityExceptionHandl
     private static final String CONSTANT_VALIDATION_LENGTH = "Length";
     private static final String CONSTANT_VALIDATION_NOT_NULL = "NotNull";
     private static final String CONSTANT_VALIDATION_PATTERN = "Pattern";
+    private static final String CONSTANT_VALIDATION_MIN = "Min";
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -83,6 +84,9 @@ public class SalesManagementExceptionHandle extends ResponseEntityExceptionHandl
                         Objects.requireNonNull(fieldError.getArguments())[2], fieldError.getArguments()[1]));
             case CONSTANT_VALIDATION_PATTERN:
                 return Objects.requireNonNull(fieldError.getDefaultMessage()).concat(" formato inválido");
+            case CONSTANT_VALIDATION_MIN:
+                return Objects.requireNonNull(fieldError.getDefaultMessage()).concat(String.format(" deve ser maior ou igual a %s",
+                        Objects.requireNonNull(fieldError.getArguments())[1]));
             default:
                 return fieldError.toString();
         }

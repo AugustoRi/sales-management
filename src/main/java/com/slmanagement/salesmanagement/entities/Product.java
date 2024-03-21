@@ -47,4 +47,8 @@ public class Product {
         this.observability = observability;
         this.category = category;
     }
+
+    public Product(Long id) {
+        this.id = id;
+    }
 }
